@@ -33,9 +33,18 @@ namespace Tasinmaz_Proje
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-            services.AddControllers();
 
-             
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
             services.AddScoped<IDurumService, DurumService>();
             services.AddScoped<ITasinmazBilgiService, TasinmazBilgiService>();
             services.AddScoped<IUserService, UserService>();
@@ -44,7 +53,6 @@ namespace Tasinmaz_Proje
             services.AddScoped<IIslemTipService, IslemTipService>();
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IMahalleService, MahalleService>();
-
 
             // Swagger konfigürasyonu
             services.AddSwaggerGen(c =>
@@ -80,6 +88,8 @@ namespace Tasinmaz_Proje
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("AllowAll"); // CORS politikasýný uygula
 
             app.UseAuthorization();
 
