@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+ï»¿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,9 +33,18 @@ namespace Tasinmaz_Proje
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-            services.AddControllers();
 
-             
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
             services.AddScoped<IDurumService, DurumService>();
             services.AddScoped<ITasinmazBilgiService, TasinmazBilgiService>();
             services.AddScoped<IUserService, UserService>();
@@ -45,15 +54,14 @@ namespace Tasinmaz_Proje
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IMahalleService, MahalleService>();
 
-
-            // Swagger konfigürasyonu
+            // Swagger konfigÃ¼rasyonu
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Title = "TasinmazYonetimi API",
                     Version = "v1",
-                    Description = "Taþýnmaz Yönetimi API belgeleri",
+                    Description = "TaÃ¾Ã½nmaz YÃ¶netimi API belgeleri",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Destek Ekibi",
@@ -81,6 +89,8 @@ namespace Tasinmaz_Proje
 
             app.UseRouting();
 
+            app.UseCors("AllowAll"); // CORS politikasÃ½nÃ½ uygula
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -88,12 +98,12 @@ namespace Tasinmaz_Proje
                 endpoints.MapControllers();
             });
 
-            // Swagger'ý kullanýn
+            // Swagger'Ã½ kullanÃ½n
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "TasinmazYonetimi API v1");
-                c.RoutePrefix = string.Empty; // Swagger UI'nýn kök URL'de olmasýný saðlar
+                c.RoutePrefix = string.Empty; // Swagger UI'nÃ½n kÃ¶k URL'de olmasÃ½nÃ½ saÃ°lar
             });
         }
     }
