@@ -40,5 +40,21 @@ namespace Tasinmaz_Proje.Controllers
             await _service.AddIl(il);
             return CreatedAtAction(nameof(GetIlById), new {id = il.Id}, il);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteIl(int id)
+        {
+            await _service.DeleteIl(id);
+            return NoContent();
+        }
+
+
+        [HttpPost("import/json")]
+        public async Task<IActionResult> ImportIllerFromJson()
+        {
+            var filePath = @"C:\Users\user\Desktop\4821a26db048cc0972c1beee48a408de-4754e5f9d09dade2e6c461d7e960e13ef38eaa88\cityList.json"; // Dosya yolunu buraya girin
+            await _service.AddIllerFromJsonFileAsync(filePath);
+            return Ok();
+        }
     }
 }

@@ -9,6 +9,8 @@ namespace Tasinmaz_Proje.Services
         Task<List<Mahalle>> ListMahalle();
         Task<Mahalle> GetMahalleById(int id);
         Task AddMahalle (Mahalle mahalle);
+        Task AddNeighborhoodsFromJsonFileAsync(string filePath);
+
 
     }
 }

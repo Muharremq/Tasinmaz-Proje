@@ -9,6 +9,9 @@ namespace Tasinmaz_Proje.Services
         Task<List<Ilce>> ListIlce();
         Task<Ilce> GetIlceById(int id);
         Task AddIlce(Ilce ilce);
+        Task AddDistrictsFromJsonFileAsync(string filePath);
+        Task<List<Ilce>> GetIlcelerByIlId(int ilId); // Yeni method
+
 
     }
 }

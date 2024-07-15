@@ -9,5 +9,9 @@ namespace Tasinmaz_Proje.Services
         Task<List<Il>> ListIl();
         Task<Il> GetIlById(int id);
         Task AddIl(Il il);
+        Task AddIllerFromJsonFileAsync(string filePath);
+        Task DeleteIl(int id);
+
+
     }
 }
