@@ -59,5 +59,16 @@ namespace Tasinmaz_Proje.Controllers
                 return BadRequest($"Error importing neighborhoods: {ex.Message}");
             }
         }
+
+        [HttpGet("by-ilce/{ilceId}")]
+        public async Task<ActionResult<IEnumerable<Mahalle>>> GetMahallelerByIlceId (int ilceId)
+        {
+            var mahalleler = await _service.GetMahallelerByIlceId(ilceId);
+            if(mahalleler == null || mahalleler.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(mahalleler);
+        }
     }
 }

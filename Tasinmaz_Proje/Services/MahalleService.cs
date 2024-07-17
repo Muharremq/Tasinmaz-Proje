@@ -6,6 +6,7 @@ using Tasinmaz_Proje.DataAccess;
 using Newtonsoft.Json;
 using System.IO;
 using System;
+using System.Linq;
 
 namespace Tasinmaz_Proje.Services
 {
@@ -103,6 +104,11 @@ namespace Tasinmaz_Proje.Services
         public async Task<IEnumerable<Mahalle>> GetAllMahallelerAsync()
         {
             return await _dbContext.Mahalleler.ToListAsync();
+        }
+
+        public async Task<List<Mahalle>> GetMahallelerByIlceId(int ilceId)
+        {
+            return await _dbContext.Mahalleler.Where(mahalle => mahalle.IlceId == ilceId).ToListAsync();
         }
     }
 }
