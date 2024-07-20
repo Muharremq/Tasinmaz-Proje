@@ -21,9 +21,13 @@ namespace Tasinmaz_Proje.Entities
         [Required]
         [MaxLength(50)]
         public string Nitelik { get; set; }
+        [Required]
+        public string Adres{ get; set; }
 
         [Required]
-        public string KoordinatBilgileri { get; set; }
+        public double KoordinatX { get; set; }
+        [Required]
+        public double KoordinatY { get; set; }
 
         public int MahalleId { get; set; }
         [ForeignKey("MahalleId")]
