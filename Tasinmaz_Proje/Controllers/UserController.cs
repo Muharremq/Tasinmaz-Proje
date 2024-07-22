@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tasinmaz_Proje.Entities;
@@ -11,10 +13,12 @@ namespace Tasinmaz_Proje.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILogService _logService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ILogService logService)
         {
             _userService = userService;
+            _logService = logService;
         }
 
         [HttpGet]
@@ -39,6 +43,19 @@ namespace Tasinmaz_Proje.Controllers
         public async Task<ActionResult<User>> AddUser (User user)
         {
             await _userService.AddUser(user);
+
+            var log = new Log
+            {
+                KullaniciId = user.Id,
+                Durum = "Başarılı",
+                IslemTip = "Ekleme",
+                Aciklama = $"Kullanıcı: {user.Id} eklendi",
+                TarihveSaat = DateTime.Now,
+                KullaniciTip = "Admin"
+            };
+
+            await _logService.AddLog(log);
+
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
@@ -51,6 +68,18 @@ namespace Tasinmaz_Proje.Controllers
             }
 
             await _userService.UpdateUser(user);
+
+            var log = new Log
+            {
+                KullaniciId = user.Id,
+                Durum = "Başarılı",
+                IslemTip = "Güncelleme",
+                Aciklama = $"Kullanıcı ID: {user.Id} güncellendi",
+                TarihveSaat = DateTime.Now,
+                KullaniciTip = "Admin"
+            };
+            await _logService.AddLog(log);
+
             return NoContent();
         }
 
@@ -58,6 +87,18 @@ namespace Tasinmaz_Proje.Controllers
         public async Task<IActionResult> DeleteUser (int id)
         {
             await _userService.DeleteUser(id);
+
+            var log = new Log
+            {
+                KullaniciId = id,
+                Durum = "Başarılı",
+                IslemTip = "Silme",
+                Aciklama = $"Taşınmaz ID: {id} silindi",
+                TarihveSaat = DateTime.Now,
+                KullaniciTip = "Admin"
+            };
+            await _logService.AddLog(log);
+
             return NoContent();
         }
     }

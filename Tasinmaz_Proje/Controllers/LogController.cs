@@ -12,6 +12,7 @@ namespace Tasinmaz_Proje.Controllers
     public class LogController : ControllerBase
     {
         private readonly ILogService _service;
+
         public LogController(ILogService service)
         {
             _service = service;
@@ -25,10 +26,10 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Log>> GetLogById (int id)
+        public async Task<ActionResult<Log>> GetLogById(int id)
         {
             var log = await _service.GetLogById(id);
-            if(log == null)
+            if (log == null)
             {
                 return NotFound();
             }
@@ -36,7 +37,7 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Log>> AddLog (Log log)
+        public async Task<ActionResult<Log>> AddLog(Log log)
         {
             await _service.AddLog(log);
             return CreatedAtAction(nameof(GetLogById), new { id = log.Id }, log);
@@ -49,13 +50,13 @@ namespace Tasinmaz_Proje.Controllers
             {
                 return BadRequest();
             }
-        
+
             await _service.UpdateLog(log);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLog (int id)
+        public async Task<IActionResult> DeleteLog(int id)
         {
             await _service.DeleteLog(id);
             return NoContent();
