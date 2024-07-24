@@ -9,6 +9,10 @@ using Tasinmaz_Proje.Services;
 using System;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Business.Abstract;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 
 namespace Tasinmaz_Proje
 {
@@ -23,6 +27,16 @@ namespace Tasinmaz_Proje
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Appsettings:Token").Value);
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
+            services.AddScoped<IUserService, UserService>();
+
+
             services.AddControllersWithViews();
 
             services.AddDbContext<TasinmazDbContext>(options =>
@@ -45,9 +59,20 @@ namespace Tasinmaz_Proje
                     });
             });
 
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddScoped<IDurumService, DurumService>();
             services.AddScoped<ITasinmazBilgiService, TasinmazBilgiService>();
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IIlceService, IlceService>();
             services.AddScoped<IIlService, IlService>();
             services.AddScoped<IIslemTipService, IslemTipService>();

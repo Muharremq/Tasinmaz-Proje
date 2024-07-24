@@ -17,13 +17,16 @@ namespace Tasinmaz_Proje.Entities
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
+
+        [Required]
+        public byte[] PasswordSalt { get; set; }
 
         [Required]
         public string Phone { get; set; }
 
         [Required]
-        public string Rol { get ; set; }
+        public string Role { get ; set; }
 
         public ICollection<TasinmazBilgi> Tasinmazlar { get; set; }
     }

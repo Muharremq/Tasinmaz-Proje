@@ -30,7 +30,12 @@ namespace Tasinmaz_Proje.Entities
         public double KoordinatY { get; set; }
 
         public int MahalleId { get; set; }
+        public int UserId { get; set; }
+
         [ForeignKey("MahalleId")]
         public Mahalle Mahalle { get; set; }
+
+        [ForeignKey("UserId")]
+        public User User { get; set; }
     }
 }

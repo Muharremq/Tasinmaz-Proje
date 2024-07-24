@@ -21,7 +21,7 @@ namespace Tasinmaz_Proje.Services
             return await _dbContext.Tasinmazlar
                 .Include(t => t.Mahalle)
                 .ThenInclude(t => t.Ilce)
-                .ThenInclude(t => t.Il)
+                .ThenInclude(t => t.Il).Include(t => t.User)
                 .ToListAsync();
         }
 
