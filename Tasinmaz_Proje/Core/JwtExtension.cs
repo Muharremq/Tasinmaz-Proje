@@ -10,6 +10,5 @@ namespace Tasinmaz_Proje.Core
             response.Headers.Add("Access-Control-Allow-Origin", "*");
             response.Headers.Add("Access-Control-Expose-Header", "Application-Error");
         }
-
     }
 }

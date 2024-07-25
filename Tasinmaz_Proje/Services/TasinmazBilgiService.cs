@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Tasinmaz_Proje.Business.Abstract;
 using Tasinmaz_Proje.DataAccess;
@@ -21,7 +22,8 @@ namespace Tasinmaz_Proje.Services
             return await _dbContext.Tasinmazlar
                 .Include(t => t.Mahalle)
                 .ThenInclude(t => t.Ilce)
-                .ThenInclude(t => t.Il).Include(t => t.User)
+                .ThenInclude(t => t.Il)
+                .Include(t => t.User)
                 .ToListAsync();
         }
 
@@ -57,6 +59,16 @@ namespace Tasinmaz_Proje.Services
             _dbContext.Tasinmazlar.Remove(tasinmazBilgi);
             await _dbContext.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<TasinmazBilgi>> GetTasinmazlarByUserId(int userId)
+        {
+            return await _dbContext.Tasinmazlar.Include(t => t.Mahalle)
+                .ThenInclude(t => t.Ilce)
+                .ThenInclude(t => t.Il)
+                .Include(t => t.User)
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
         }
     }
 }

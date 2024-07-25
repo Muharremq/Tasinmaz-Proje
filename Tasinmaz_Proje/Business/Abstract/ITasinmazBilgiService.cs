@@ -12,6 +12,8 @@ namespace Tasinmaz_Proje.Business.Abstract
         Task<TasinmazBilgi> AddTasinmaz(TasinmazBilgi tasinmazBilgi);
         Task<TasinmazBilgi> UpdateTasinmaz(TasinmazBilgi tasinmazBilgi);
         Task<bool> DeleteTasinmaz(int id);
+        Task<List<TasinmazBilgi>> GetTasinmazlarByUserId(int userId);
+
 
     }
 }

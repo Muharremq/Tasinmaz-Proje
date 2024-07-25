@@ -8,37 +8,37 @@ namespace Tasinmaz_Proje.Services
 {
     public class UserService : IUserService
     {
-        private readonly TasinmazDbContext _dbContext;
+        private readonly TasinmazDbContext _context;
         
         public UserService(TasinmazDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _context = dbContext;
         }
         public async Task<List<User>> ListUser()
         {
-            return await _dbContext.Users.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
         public async Task<User> GetUserById (int id)
         {
-            return await _dbContext.Users.FindAsync(id);
+            return await _context.Users.FindAsync(id);
         }
         public async Task AddUser (User user)
         {
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
         public async Task UpdateUser (User user)
         {
-            _dbContext.Entry(user).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
         public async Task DeleteUser (int id)
         {
-            var user = await _dbContext.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                _dbContext.Users.Remove(user);
-                await _dbContext.SaveChangesAsync();
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
             }
         }
     }

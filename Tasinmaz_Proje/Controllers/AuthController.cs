@@ -12,14 +12,15 @@ using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Entities.Dtos;
 using Tasinmaz_Proje.Services;
 
+
 namespace Tasinmaz_Proje.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository _authRepository;
-        private readonly IConfiguration _configuration;
+        private IAuthRepository _authRepository;
+        private IConfiguration _configuration;
 
         public AuthController(IAuthRepository authRepository, IConfiguration configuration)
         {
@@ -32,13 +33,12 @@ namespace Tasinmaz_Proje.Controllers
         {
             if (await _authRepository.UserExists(userForRegisterDto.Email))
             {
-                ModelState.AddModelError("Email", "Email zaten kullanılıyor");
+                ModelState.AddModelError("Email", "Email zaten alinmis");
             }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
             var userToCreate = new User
             {
                 Name = userForRegisterDto.Name,
@@ -74,6 +74,7 @@ namespace Tasinmaz_Proje.Controllers
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature)
+
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);

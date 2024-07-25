@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Tasinmaz_Proje.Business.Abstract;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Services;
+using System.Linq;
 
 namespace Tasinmaz_Proje.Controllers
 {
@@ -102,6 +103,17 @@ namespace Tasinmaz_Proje.Controllers
             };
             await _logService.AddLog(log);
             return NoContent();
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<TasinmazBilgi>>> GetTasinmazlarByUserId(int userId)
+        {
+            var tasinmazlar = await _tasinmazBilgiService.GetTasinmazlarByUserId(userId);
+            if (tasinmazlar == null || !tasinmazlar.Any())
+            {
+                return NotFound();
+            }
+            return Ok(tasinmazlar);
         }
     }
 }
