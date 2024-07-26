@@ -71,6 +71,12 @@ namespace Tasinmaz_Proje
                 };
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("user"));
+            });
+
             services.AddScoped<IDurumService, DurumService>();
             services.AddScoped<ITasinmazBilgiService, TasinmazBilgiService>();
             services.AddScoped<IIlceService, IlceService>();
@@ -116,6 +122,8 @@ namespace Tasinmaz_Proje
 
             app.UseCors("AllowAll"); // CORS politikasýný uygula
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

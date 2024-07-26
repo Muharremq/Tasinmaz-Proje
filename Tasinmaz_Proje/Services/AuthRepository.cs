@@ -25,7 +25,6 @@ namespace Tasinmaz_Proje.Services
             user.PasswordSalt = passwordSalt;
 
             await _dbContext.Users.AddAsync(user);
-
             await _dbContext.SaveChangesAsync();
             return user;
         }
@@ -53,7 +52,7 @@ namespace Tasinmaz_Proje.Services
             return user;
         }
 
-        private bool VerifyPasswordHash(string password, byte[] UserPasswordHash, byte[] userPasswordSalt)
+        private bool VerifyPasswordHash(string password, byte[] userPasswordHash, byte[] userPasswordSalt)
         {
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512(userPasswordSalt))
@@ -61,7 +60,7 @@ namespace Tasinmaz_Proje.Services
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computedHash[i] != UserPasswordHash[i])
+                    if (computedHash[i] != userPasswordHash[i])
                     {
                         return false;
                     }
@@ -78,6 +77,17 @@ namespace Tasinmaz_Proje.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> IsAdmin(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return user != null && user.Role == "admin";
+        }
+
+        public async Task<User> GetUserById(int id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

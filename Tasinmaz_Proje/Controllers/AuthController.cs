@@ -68,7 +68,8 @@ namespace Tasinmaz_Proje.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role)
                 }),
 
                 Expires = DateTime.Now.AddDays(1),
@@ -80,6 +81,15 @@ namespace Tasinmaz_Proje.Controllers
             var tokenString = tokenHandler.WriteToken(token);
 
             return Ok(new { Token = tokenString });
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var user = await _authRepository.GetUserById(id);
+            if (user == null)
+            { return NotFound(); }
+            return Ok(user);
         }
     }
 }

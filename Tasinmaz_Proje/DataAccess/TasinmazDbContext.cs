@@ -29,6 +29,12 @@ namespace Tasinmaz_Proje.DataAccess
             });
 
             base.OnModelCreating(modelBuilder);
+
+                modelBuilder.Entity<TasinmazBilgi>()
+                    .HasOne(t => t.User)
+                    .WithMany(u => u.Tasinmazlar)
+                    .HasForeignKey(t => t.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

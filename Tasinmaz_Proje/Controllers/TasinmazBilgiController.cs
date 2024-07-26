@@ -6,6 +6,8 @@ using Tasinmaz_Proje.Business.Abstract;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Tasinmaz_Proje.Controllers
 {
@@ -14,22 +16,46 @@ namespace Tasinmaz_Proje.Controllers
     public class TasinmazBilgiController : ControllerBase
     {
         private readonly ITasinmazBilgiService _tasinmazBilgiService;
+        private readonly IAuthRepository _authRepository;
         private readonly ILogService _logService;
 
-        public TasinmazBilgiController(ITasinmazBilgiService tasinmazBilgiService, ILogService logService)
+        public TasinmazBilgiController(ITasinmazBilgiService tasinmazBilgiService, IAuthRepository authRepository, ILogService logService)
         {
             _tasinmazBilgiService = tasinmazBilgiService;
+            _authRepository = authRepository;
             _logService = logService;
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult<IEnumerable<TasinmazBilgi>>> GetAllTasinmazlar()
         {
-            var tasinmazlar = await _tasinmazBilgiService.GetAllTasinmazBilgi();
-            return Ok(tasinmazlar);
+
+
+            try
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+                var isAdmin = await _authRepository.IsAdmin(userEmail);
+                if (isAdmin)
+                {
+                    var tasinmazlar = await _tasinmazBilgiService.GetAllTasinmazBilgi();
+                    return Ok(tasinmazlar);
+                }else
+                {
+                    var tasinmazlar = await _tasinmazBilgiService.GetTasinmazlarByUserId(userId);
+                    return Ok(tasinmazlar);
+                }
+            }catch(Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult<TasinmazBilgi>> GetTasinmazById(int id)
         {
             var tasinmaz = await _tasinmazBilgiService.GetTasinmazBilgiById(id);
@@ -41,6 +67,8 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult<TasinmazBilgi>> AddTasinmaz(TasinmazBilgi tasinmazBilgi)
         {
             var createdTasinmaz = await _tasinmazBilgiService.AddTasinmaz(tasinmazBilgi);
@@ -60,6 +88,8 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult<TasinmazBilgi>> UpdateTasinmaz(int id, TasinmazBilgi tasinmazBilgi)
         {
             if (id != tasinmazBilgi.Id)
@@ -84,6 +114,8 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult> DeleteTasinmaz(int id)
         {
         var result = await _tasinmazBilgiService.DeleteTasinmaz(id);
@@ -106,6 +138,8 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "admin,user")]
+
         public async Task<ActionResult<IEnumerable<TasinmazBilgi>>> GetTasinmazlarByUserId(int userId)
         {
             var tasinmazlar = await _tasinmazBilgiService.GetTasinmazlarByUserId(userId);

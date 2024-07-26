@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Tasinmaz_Proje.Services;
 
 namespace Tasinmaz_Proje.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class LogController : ControllerBase
