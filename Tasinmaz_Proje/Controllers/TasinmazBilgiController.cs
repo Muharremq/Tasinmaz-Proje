@@ -75,7 +75,7 @@ namespace Tasinmaz_Proje.Controllers
 
             var log = new Log
             {
-                KullaniciId = tasinmazBilgi.Id,
+                KullaniciId = tasinmazBilgi.UserId,
                 Durum = "Başarılı",
                 IslemTip = "Ekleme",
                 Aciklama = $"Taşınmaz ID: {createdTasinmaz.Id} eklendi",
@@ -101,7 +101,7 @@ namespace Tasinmaz_Proje.Controllers
 
             var log = new Log
             {
-                KullaniciId = tasinmazBilgi.Id,
+                KullaniciId = tasinmazBilgi.UserId,
                 Durum = "Başarılı",
                 IslemTip = "Güncelleme",
                 Aciklama = $"Taşınmaz ID: {updatedTasinmaz.Id} güncellendi",
@@ -118,17 +118,23 @@ namespace Tasinmaz_Proje.Controllers
 
         public async Task<ActionResult> DeleteTasinmaz(int id)
         {
-        var result = await _tasinmazBilgiService.DeleteTasinmaz(id);
-        if (!result)
-        {
-            return NotFound();
-        }
+            var result = await _tasinmazBilgiService.DeleteTasinmaz(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier); // Kullanıcı ID'sini alır
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized(); // Kullanıcı ID'si alınamaz veya dönüştürülemezse yetkisiz dönüş yapılır
+            }
 
             var log = new Log
             {
-                KullaniciId = id,
+                KullaniciId = userId, // Kullanıcı ID'sini burada kullanıyoruz
                 Durum = "Başarılı",
-                IslemTip = "Ekleme",
+                IslemTip = "Sil",
                 Aciklama = $"Taşınmaz ID: {id} silindi",
                 TarihveSaat = DateTime.Now,
                 KullaniciTip = "Admin"
