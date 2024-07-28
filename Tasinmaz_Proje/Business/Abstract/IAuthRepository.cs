@@ -10,5 +10,6 @@ namespace Tasinmaz_Proje.Business.Abstract
         Task<bool> UserExists(string email);
         Task<User> GetUserById(int id);
         Task<bool> IsAdmin(string email);
+        void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
     }
 }

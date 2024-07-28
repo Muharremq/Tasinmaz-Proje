@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Server.IIS.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Tasinmaz_Proje.Business.Abstract;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Services;
+using Tasinmaz_Proje.Entities.Dtos;
 
 namespace Tasinmaz_Proje.Controllers
 {
@@ -16,11 +18,13 @@ namespace Tasinmaz_Proje.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogService _logService;
+        private readonly IAuthRepository _authRepository;
 
-        public UserController(IUserService userService, ILogService logService)
+        public UserController(IUserService userService, ILogService logService, IAuthRepository authRepository)
         {
             _userService = userService;
             _logService = logService;
+            _authRepository = authRepository;
         }
 
         [HttpGet]
@@ -77,40 +81,67 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
         {
+            if (id != userForUpdateDto.Id)
+            {
+                return BadRequest();
+            }
+
+            var userFromRepo = await _userService.GetUserById(id);
+
+            if (userFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            userFromRepo.Name = userForUpdateDto.Name;
+            userFromRepo.Surname = userForUpdateDto.Surname;
+            userFromRepo.Email = userForUpdateDto.Email;
+            userFromRepo.Phone = userForUpdateDto.Phone;
+            userFromRepo.Role = userForUpdateDto.Role;
+
+            if (!string.IsNullOrEmpty(userForUpdateDto.Password))
+            {
+                byte[] passwordHash, passwordSalt;
+                // CreatePasswordHash metodu _authRepository'den çağrılmalı.
+                _authRepository.CreatePasswordHash(userForUpdateDto.Password, out passwordHash, out passwordSalt);
+                userFromRepo.PasswordHash = passwordHash;
+                userFromRepo.PasswordSalt = passwordSalt;
+            }
+
             try
             {
-                if (id != user.Id)
-                {
-                    return BadRequest();
-                }
-
-                await _userService.UpdateUser(user);
+                await _userService.UpdateUser(userFromRepo);
 
                 var log = new Log
                 {
-                    KullaniciId = user.Id,
+                    KullaniciId = userForUpdateDto.Id,
                     Durum = "Başarılı",
                     IslemTip = "Güncelleme",
-                    Aciklama = $"Kullanıcı ID: {user.Id} başarılı bir şekilde güncellendi",
+                    Aciklama = $"Kullanıcı ID: {userForUpdateDto.Id} başarılı bir şekilde güncellendi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
                 };
                 await _logService.AddLog(log);
-            }catch(Exception ex)
+
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 var log = new Log
                 {
-                    KullaniciId = user.Id,
+                    KullaniciId = userForUpdateDto.Id,
                     Durum = "Başarısız",
                     IslemTip = "Güncelleme",
-                    Aciklama = $"Kullanıcı ID: {user.Id} silinirken bir sorun oluştu",
+                    Aciklama = $"Kullanıcı ID: {userForUpdateDto.Id} güncellenirken bir sorun oluştu: {ex.Message}",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
                 };
+                await _logService.AddLog(log);
+
+                return StatusCode(500, "Internal server error");
             }
-            return NoContent();
         }
 
         [HttpDelete("{id}")]
