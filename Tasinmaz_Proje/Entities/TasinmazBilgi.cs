@@ -13,10 +13,10 @@ namespace Tasinmaz_Proje.Entities
         public string Name { get; set; }
 
         [Required]
-        public int Ada { get; set; }
+        public string Ada { get; set; }
 
         [Required]
-        public int Parsel { get; set; }
+        public string Parsel { get; set; }
 
         [Required]
         [MaxLength(50)]

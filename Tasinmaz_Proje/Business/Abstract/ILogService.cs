@@ -11,5 +11,7 @@ namespace Tasinmaz_Proje.Services
         Task AddLog(Log log);
         Task UpdateLog(Log log);
         Task DeleteLog(int id);
+        Task<IEnumerable<Log>> GetAllLogsAsync();
+        IEnumerable<Log> SearchLogs(string term);
     }
 }

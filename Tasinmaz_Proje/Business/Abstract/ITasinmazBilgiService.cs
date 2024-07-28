@@ -13,6 +13,8 @@ namespace Tasinmaz_Proje.Business.Abstract
         Task<TasinmazBilgi> UpdateTasinmaz(TasinmazBilgi tasinmazBilgi);
         Task<bool> DeleteTasinmaz(int id);
         Task<List<TasinmazBilgi>> GetTasinmazlarByUserId(int userId);
+        Task<IEnumerable<TasinmazBilgi>> SearchAllAsync(string keyword);  // Yeni metod
+        Task<IEnumerable<TasinmazBilgi>> SearchByUserIdAsync(int userId, string keyword);
 
 
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Services;
@@ -60,6 +61,18 @@ namespace Tasinmaz_Proje.Controllers
         {
             await _service.DeleteLog(id);
             return NoContent();
+        }
+
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<Log>> SearchLogs([FromQuery] string term)
+        {
+            var logs = _service.SearchLogs(term);
+            if (logs == null || !logs.Any())
+            {
+                return NotFound("No logs found matching the search term.");
+            }
+
+            return Ok(logs);
         }
     }
 }

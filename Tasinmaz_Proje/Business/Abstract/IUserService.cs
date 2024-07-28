@@ -8,7 +8,7 @@ namespace Tasinmaz_Proje.Services
     {
         Task<List<User>> ListUser();
         Task<User> GetUserById(int id);
-        Task AddUser(User user);
+        Task<User> AddUser(User user);
         Task UpdateUser(User user);
         Task DeleteUser(int id);
     }

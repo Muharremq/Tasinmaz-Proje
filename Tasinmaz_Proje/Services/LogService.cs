@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.DataAccess;
+using System.Linq;
 
 namespace Tasinmaz_Proje.Services
 {
@@ -45,6 +46,26 @@ namespace Tasinmaz_Proje.Services
                 _dbContext.Logs.Remove(log);
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Log>> GetAllLogsAsync()
+        {
+            return await _dbContext.Logs.ToListAsync();
+        }
+
+        public IEnumerable<Log> SearchLogs(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return _dbContext.Logs.ToList();
+            }
+
+            return _dbContext.Logs
+                           .Where(log => log.Durum.Contains(term) ||
+                                         log.IslemTip.Contains(term) ||
+                                         log.Aciklama.Contains(term) ||
+                                         log.KullaniciTip.Contains(term))
+                           .ToList();
         }
     }
 }

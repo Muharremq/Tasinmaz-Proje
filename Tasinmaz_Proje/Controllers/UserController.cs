@@ -44,63 +44,104 @@ namespace Tasinmaz_Proje.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> AddUser (User user)
         {
-            await _userService.AddUser(user);
-
-            var log = new Log
+            try
             {
-                KullaniciId = user.Id,
-                Durum = "Başarılı",
-                IslemTip = "Ekleme",
-                Aciklama = $"Kullanıcı: {user.Id} eklendi",
-                TarihveSaat = DateTime.Now,
-                KullaniciTip = "Admin"
-            };
+                var createdUser = await _userService.AddUser(user);
 
-            await _logService.AddLog(log);
+                var log = new Log
+                {
+                    KullaniciId = user.Id,
+                    Durum = "Başarılı",
+                    IslemTip = "Ekleme",
+                    Aciklama = $"Kullanıcı: {user.Id} eklendi",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
 
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+                await _logService.AddLog(log);
+            }catch (Exception ex) 
+            {
+                var log = new Log
+                {
+                    KullaniciId = user.Id,
+                    Durum = "Başarısız",
+                    IslemTip = "Kullanıcı Ekleme",
+                    Aciklama = $"Kullanıcı eklenirkern hata oluştur.",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
+                await _logService.AddLog(log);
+            }
+                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, User user)
         {
-            if (id != user.Id)
+            try
             {
-                return BadRequest();
+                if (id != user.Id)
+                {
+                    return BadRequest();
+                }
+
+                await _userService.UpdateUser(user);
+
+                var log = new Log
+                {
+                    KullaniciId = user.Id,
+                    Durum = "Başarılı",
+                    IslemTip = "Güncelleme",
+                    Aciklama = $"Kullanıcı ID: {user.Id} başarılı bir şekilde güncellendi",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
+                await _logService.AddLog(log);
+            }catch(Exception ex)
+            {
+                var log = new Log
+                {
+                    KullaniciId = user.Id,
+                    Durum = "Başarısız",
+                    IslemTip = "Güncelleme",
+                    Aciklama = $"Kullanıcı ID: {user.Id} silinirken bir sorun oluştu",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
             }
-
-            await _userService.UpdateUser(user);
-
-            var log = new Log
-            {
-                KullaniciId = user.Id,
-                Durum = "Başarılı",
-                IslemTip = "Güncelleme",
-                Aciklama = $"Kullanıcı ID: {user.Id} güncellendi",
-                TarihveSaat = DateTime.Now,
-                KullaniciTip = "Admin"
-            };
-            await _logService.AddLog(log);
-
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser (int id)
         {
-            await _userService.DeleteUser(id);
-
-            var log = new Log
+            try
             {
-                KullaniciId = id,
-                Durum = "Başarılı",
-                IslemTip = "Silme",
-                Aciklama = $"Taşınmaz ID: {id} silindi",
-                TarihveSaat = DateTime.Now,
-                KullaniciTip = "Admin"
-            };
-            await _logService.AddLog(log);
-
+                await _userService.DeleteUser(id);
+                var log = new Log
+                {
+                    KullaniciId = id,
+                    Durum = "Başarılı",
+                    IslemTip = "Silme",
+                    Aciklama = $"Kullanıcı ID: {id} başarılı bir şekilde silindi",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
+                await _logService.AddLog(log);
+            }catch (Exception ex)
+            {
+                var log = new Log
+                {
+                    KullaniciId = id,
+                    Durum = "Başarısız",
+                    IslemTip = "Silme",
+                    Aciklama = $"Kullanıcı ID: {id} silinirken bir sorun oluştu",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
+                await _logService.AddLog(log);
+            }
             return NoContent();
         }
     }

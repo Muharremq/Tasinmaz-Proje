@@ -53,7 +53,7 @@ namespace Tasinmaz_Proje.Services
         public async Task<bool> DeleteTasinmaz(int id)
         {
             var tasinmazBilgi = await _dbContext.Tasinmazlar.FindAsync(id);
-            if(tasinmazBilgi == null)
+            if (tasinmazBilgi == null)
                 return false;
 
             _dbContext.Tasinmazlar.Remove(tasinmazBilgi);
@@ -68,6 +68,31 @@ namespace Tasinmaz_Proje.Services
                 .ThenInclude(t => t.Il)
                 .Include(t => t.User)
                 .Where(t => t.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TasinmazBilgi>> SearchAllAsync(string keyword)
+        {
+            return await _dbContext.Tasinmazlar
+                .Include(t => t.Mahalle)
+                .ThenInclude(m => m.Ilce)
+                .ThenInclude(i => i.Il)
+                .Where(t => t.Ada.Contains(keyword) || t.Parsel.Contains(keyword) || t.Nitelik.Contains(keyword) ||
+                            t.Mahalle.Name.Contains(keyword) || t.Mahalle.Ilce.Name.Contains(keyword) ||
+                            t.Mahalle.Ilce.Il.Name.Contains(keyword) || t.Adres.Contains(keyword))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TasinmazBilgi>> SearchByUserIdAsync(int userId, string keyword)
+        {
+            return await _dbContext.Tasinmazlar
+                .Include(t => t.Mahalle)
+                .ThenInclude(m => m.Ilce)
+                .ThenInclude(i => i.Il)
+                .Where(t => t.UserId == userId &&
+                            (t.Ada.Contains(keyword) || t.Parsel.Contains(keyword) || t.Nitelik.Contains(keyword) ||
+                             t.Mahalle.Name.Contains(keyword) || t.Mahalle.Ilce.Name.Contains(keyword) ||
+                             t.Mahalle.Ilce.Il.Name.Contains(keyword) || t.Adres.Contains(keyword)))
                 .ToListAsync();
         }
     }

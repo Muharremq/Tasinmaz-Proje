@@ -12,20 +12,21 @@ using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.Entities.Dtos;
 using Tasinmaz_Proje.Services;
 
-
 namespace Tasinmaz_Proje.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuthRepository _authRepository;
-        private IConfiguration _configuration;
+        private readonly IAuthRepository _authRepository;
+        private readonly IConfiguration _configuration;
+        private readonly ILogService _logService;
 
-        public AuthController(IAuthRepository authRepository, IConfiguration configuration)
+        public AuthController(IAuthRepository authRepository, IConfiguration configuration, ILogService logService)
         {
             _authRepository = authRepository;
             _configuration = configuration;
+            _logService = logService;
         }
 
         [HttpPost("register")]
@@ -47,8 +48,39 @@ namespace Tasinmaz_Proje.Controllers
                 Phone = userForRegisterDto.Phone,
                 Role = userForRegisterDto.Role
             };
+
+            try
+            {
             var createdUser = await _authRepository.Register(userToCreate, userForRegisterDto.Password);
+
+            var log = new Log
+            {
+                KullaniciId = createdUser.Id,
+                Durum = "Başarılı",
+                IslemTip = "Kullanıcı Eklendi",
+                Aciklama = $"Kullanıcı ID: {createdUser.Id} eklendi",
+                TarihveSaat = DateTime.Now,
+                KullaniciTip = "Admin"
+            };
+            await _logService.AddLog(log);
             return StatusCode(201);
+
+            }catch(Exception ex)
+            {
+                var log = new Log
+                {
+                    KullaniciId = userToCreate.Id,
+                    Durum = "Başarısız",
+                    IslemTip = "Kullanıcı Ekleme",
+                    Aciklama = $"Kullanıcı eklenirken hata oluştu: {ex.Message}",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Admin"
+                };
+                await _logService.AddLog(log);
+
+                Console.WriteLine($"Error adding user: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPost("login")]

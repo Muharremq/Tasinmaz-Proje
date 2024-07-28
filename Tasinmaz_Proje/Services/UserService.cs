@@ -22,10 +22,11 @@ namespace Tasinmaz_Proje.Services
         {
             return await _context.Users.FindAsync(id);
         }
-        public async Task AddUser (User user)
+        public async Task<User> AddUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return user;
         }
         public async Task UpdateUser (User user)
         {
