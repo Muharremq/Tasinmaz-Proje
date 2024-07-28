@@ -64,14 +64,9 @@ namespace Tasinmaz_Proje.Controllers
         }
 
         [HttpGet("search")]
-        public ActionResult<IEnumerable<Log>> SearchLogs([FromQuery] string term)
+        public async Task<IActionResult> SearchLogs(string term)
         {
-            var logs = _service.SearchLogs(term);
-            if (logs == null || !logs.Any())
-            {
-                return NotFound("No logs found matching the search term.");
-            }
-
+            var logs = await _service.SearchLogsAsync(term);
             return Ok(logs);
         }
     }

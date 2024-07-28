@@ -53,19 +53,14 @@ namespace Tasinmaz_Proje.Services
             return await _dbContext.Logs.ToListAsync();
         }
 
-        public IEnumerable<Log> SearchLogs(string term)
+        public async Task<IEnumerable<Log>> SearchLogsAsync(string term)
         {
-            if (string.IsNullOrWhiteSpace(term))
-            {
-                return _dbContext.Logs.ToList();
-            }
-
-            return _dbContext.Logs
-                           .Where(log => log.Durum.Contains(term) ||
-                                         log.IslemTip.Contains(term) ||
-                                         log.Aciklama.Contains(term) ||
-                                         log.KullaniciTip.Contains(term))
-                           .ToList();
+            return await _dbContext.Logs
+                .Where(l => l.Durum.Contains(term) ||
+                            l.IslemTip.Contains(term) ||
+                            l.Aciklama.Contains(term) ||
+                            l.KullaniciTip.Contains(term))
+                .ToListAsync();
         }
     }
 }
