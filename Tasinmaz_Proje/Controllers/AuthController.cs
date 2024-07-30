@@ -90,8 +90,19 @@ namespace Tasinmaz_Proje.Controllers
 
             if (user == null)
             {
+                var log = new Log
+                {
+                    KullaniciId = 0, // Kullanıcı ID'si bilinmiyor çünkü oturum açma başarısız
+                    Durum = "Başarısız",
+                    IslemTip = "Oturum Açma",
+                    Aciklama = $"Kullanıcı oturum açma başarısız: {userForLoginDto.Email}",
+                    TarihveSaat = DateTime.Now,
+                    KullaniciTip = "Unknown" // Kullanıcı tipi bilinmiyor
+                };
+                await _logService.AddLog(log);
                 return Unauthorized();
             }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Appsettings:Token").Value);
 
@@ -99,21 +110,32 @@ namespace Tasinmaz_Proje.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
                 }),
-
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature)
-
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
+            var successLog = new Log
+            {
+                KullaniciId = user.Id,
+                Durum = "Başarılı",
+                IslemTip = "Oturum Açma",
+                Aciklama = $"Kullanıcı ID: {user.Id} oturum açtı",
+                TarihveSaat = DateTime.Now,
+                KullaniciTip = user.Role
+            };
+            await _logService.AddLog(successLog);
+
             return Ok(new { Token = tokenString });
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)

@@ -104,7 +104,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = tasinmazBilgi.UserId,
                     Durum = "Başarılı",
-                    IslemTip = "Ekleme",
+                    IslemTip = " Taşınmaz Ekleme",
                     Aciklama = $"Taşınmaz ID: {createdTasinmaz.Id} eklendi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = await GetUserRoleFromToken()
@@ -119,7 +119,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = tasinmazBilgi.UserId,
                     Durum = "Başarısız",
-                    IslemTip = "Ekleme",
+                    IslemTip = "Taşınmaz Ekleme",
                     Aciklama = $"Taşınmaz eklenirken hata oluştu.",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = await GetUserRoleFromToken()
@@ -148,8 +148,8 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = tasinmazBilgi.UserId,
                     Durum = "Başarılı",
-                    IslemTip = "Güncelleme",
-                    Aciklama = $"Taşınmaz ID: {updatedTasinmaz.Id} güncellendi",
+                    IslemTip = "Taşınmaz Düzenleme",
+                    Aciklama = $"Taşınmaz ID: {updatedTasinmaz.Id} düzenlendi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = await GetUserRoleFromToken()
                 };
@@ -197,7 +197,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = userId, // Kullanıcı ID'sini burada kullanıyoruz
                     Durum = "Başarılı",
-                    IslemTip = "Sil",
+                    IslemTip = "Taşınmaz Silme",
                     Aciklama = $"Taşınmaz ID: {id} silindi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = await GetUserRoleFromToken()

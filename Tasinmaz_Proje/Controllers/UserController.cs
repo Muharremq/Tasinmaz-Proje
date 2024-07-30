@@ -56,7 +56,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = user.Id,
                     Durum = "Başarılı",
-                    IslemTip = "Ekleme",
+                    IslemTip = "Kullanıcı Ekleme",
                     Aciklama = $"Kullanıcı: {user.Id} eklendi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
@@ -118,7 +118,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = userForUpdateDto.Id,
                     Durum = "Başarılı",
-                    IslemTip = "Güncelleme",
+                    IslemTip = "Kullanıcı Düzenleme",
                     Aciklama = $"Kullanıcı ID: {userForUpdateDto.Id} başarılı bir şekilde güncellendi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
@@ -133,7 +133,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = userForUpdateDto.Id,
                     Durum = "Başarısız",
-                    IslemTip = "Güncelleme",
+                    IslemTip = "Kullanıcı Düzenleme",
                     Aciklama = $"Kullanıcı ID: {userForUpdateDto.Id} güncellenirken bir sorun oluştu: {ex.Message}",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
@@ -154,7 +154,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = id,
                     Durum = "Başarılı",
-                    IslemTip = "Silme",
+                    IslemTip = "Kullanıcı Silme",
                     Aciklama = $"Kullanıcı ID: {id} başarılı bir şekilde silindi",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
@@ -166,7 +166,7 @@ namespace Tasinmaz_Proje.Controllers
                 {
                     KullaniciId = id,
                     Durum = "Başarısız",
-                    IslemTip = "Silme",
+                    IslemTip = "Kullanıcı Silme",
                     Aciklama = $"Kullanıcı ID: {id} silinirken bir sorun oluştu",
                     TarihveSaat = DateTime.Now,
                     KullaniciTip = "Admin"
@@ -174,6 +174,13 @@ namespace Tasinmaz_Proje.Controllers
                 await _logService.AddLog(log);
             }
             return NoContent();
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers(string query)
+        {
+            var logs = await _userService.SearchUsersAsync(query);
+            return Ok(logs);
         }
     }
 }

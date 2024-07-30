@@ -7,7 +7,6 @@ namespace Tasinmaz_Proje.Business.Abstract
     public interface ITasinmazBilgiService
     {
         Task<IEnumerable<TasinmazBilgi>> GetAllTasinmazBilgi();
-
         Task<TasinmazBilgi> GetTasinmazBilgiById(int id);
         Task<TasinmazBilgi> AddTasinmaz(TasinmazBilgi tasinmazBilgi);
         Task<TasinmazBilgi> UpdateTasinmaz(TasinmazBilgi tasinmazBilgi);
@@ -15,7 +14,5 @@ namespace Tasinmaz_Proje.Business.Abstract
         Task<List<TasinmazBilgi>> GetTasinmazlarByUserId(int userId);
         Task<IEnumerable<TasinmazBilgi>> SearchAllAsync(string keyword);  // Yeni metod
         Task<IEnumerable<TasinmazBilgi>> SearchByUserIdAsync(int userId, string keyword);
-
-
     }
 }

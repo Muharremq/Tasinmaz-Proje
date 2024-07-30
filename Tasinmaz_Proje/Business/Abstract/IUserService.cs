@@ -11,5 +11,7 @@ namespace Tasinmaz_Proje.Services
         Task<User> AddUser(User user);
         Task UpdateUser(User user);
         Task DeleteUser(int id);
+
+        Task<IEnumerable<User>> SearchUsersAsync( string query);
     }
 }

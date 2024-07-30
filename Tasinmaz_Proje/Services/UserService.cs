@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tasinmaz_Proje.Entities;
 using Tasinmaz_Proje.DataAccess;
+using System.Linq;
 
 namespace Tasinmaz_Proje.Services
 {
@@ -41,6 +42,18 @@ namespace Tasinmaz_Proje.Services
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<User>> SearchUsersAsync (string query)
+        {
+            return await _context.Users
+                .Where(l => l.Name.Contains(query) ||
+                            l.Surname.Contains(query) ||
+                            l.Email.Contains(query) ||
+                            l.Phone.Contains(query) ||
+                            l.Role.Contains(query))
+                .ToListAsync();
+
         }
     }
 }
