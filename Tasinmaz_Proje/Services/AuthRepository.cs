@@ -38,9 +38,9 @@ namespace Tasinmaz_Proje.Services
             }
         }
 
-        public async Task<User> Login(string eMail, string password)
+        public async Task<User> Login(string email, string password)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == eMail);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null)
             {
                 return null;
@@ -69,9 +69,9 @@ namespace Tasinmaz_Proje.Services
             }
         }
 
-        public async Task<bool> UserExists(string eMail)
+        public async Task<bool> UserExists(string email)
         {
-            if (await _dbContext.Users.AnyAsync(x => x.Email == eMail))
+            if (await _dbContext.Users.AnyAsync(x => x.Email == email))
             {
 
                 return true;
